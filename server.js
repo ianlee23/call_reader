@@ -6,7 +6,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(markCallReadRouter);
+
+// Prefix the routes from mark-call-read.js with /api/mark-call-read
+app.use('/api/mark-call-read', markCallReadRouter);
 
 app.get('/', (req, res) => {
   res.send('Shopify Metafield Updater is running');

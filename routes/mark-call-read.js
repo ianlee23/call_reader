@@ -7,7 +7,7 @@ const ADMIN_API_ACCESS_TOKEN = process.env.ADMIN_API_ACCESS_TOKEN;
 const METAFIELD_NAMESPACE = 'custom';
 const METAFIELD_KEY = 'read_messages';
 
-router.post('/api/mark-call-read', async (req, res) => {
+router.post('/', async (req, res) => {
   const { customer_id, call_id } = req.body;
 
   if (!customer_id || !call_id) {
