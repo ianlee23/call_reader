@@ -68,8 +68,8 @@ app.post('/api/mark-call-read', async (req, res) => {
       metafield: {
         namespace: metafieldNamespace,
         key: metafieldKey,
-        type: 'json',
-        value: JSON.stringify(updatedIds),
+        type: 'list.single_line_text_field',
+        value: updatedIds,
       },
     };
 
