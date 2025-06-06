@@ -30,25 +30,20 @@ router.post('/', async (req, res) => {
     let updatedValue = [];
 
     if (existingMetafield) {
-      let current = [];
-      try {
-        current = JSON.parse(existingMetafield.value);
-        if (!Array.isArray(current)) current = [];
-      } catch (e) {
-        current = [];
-      }
+      const current = Array.isArray(existingMetafield.value)
+        ? existingMetafield.value
+        : [];
 
-      if (!current.includes(call_id)) {
-        updatedValue = [...current, call_id];
-      } else {
-        updatedValue = current;
-      }
+      // Avoid duplicates
+      updatedValue = current.includes(call_id)
+        ? current
+        : [...current, call_id];
 
       const updateUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2025-04/metafields/${existingMetafield.id}.json`;
       await axios.put(updateUrl, {
         metafield: {
           id: existingMetafield.id,
-          value: JSON.stringify(updatedValue), // <--- stringify the array
+          value: updatedValue, // ✅ Do NOT stringify
           type: 'list.single_line_text_field',
         },
       });
@@ -58,7 +53,7 @@ router.post('/', async (req, res) => {
         metafield: {
           namespace: METAFIELD_NAMESPACE,
           key: METAFIELD_KEY,
-          value: JSON.stringify([call_id]), // <--- stringify array on creation too
+          value: [call_id], // ✅ Do NOT stringify
           type: 'list.single_line_text_field',
           owner_id: customer_id,
           owner_resource: 'customer',
