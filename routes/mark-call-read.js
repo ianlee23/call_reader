@@ -21,7 +21,10 @@ router.post('/', async (req, res) => {
     });
 
     const existingMetafield = getResponse.data.metafields.find(
-      (m) => m.namespace === METAFIELD_NAMESPACE && m.key === METAFIELD_KEY
+      (m) =>
+        m.namespace === METAFIELD_NAMESPACE &&
+        m.key === METAFIELD_KEY &&
+        m.type === 'list.single_line_text_field'
     );
 
     let updatedValue = [];
@@ -45,7 +48,7 @@ router.post('/', async (req, res) => {
       await axios.put(updateUrl, {
         metafield: {
           id: existingMetafield.id,
-          value: updatedValue,
+          value: JSON.stringify(updatedValue), // <--- stringify the array
           type: 'list.single_line_text_field',
         },
       });
@@ -55,7 +58,7 @@ router.post('/', async (req, res) => {
         metafield: {
           namespace: METAFIELD_NAMESPACE,
           key: METAFIELD_KEY,
-          value: [call_id],
+          value: JSON.stringify([call_id]), // <--- stringify array on creation too
           type: 'list.single_line_text_field',
           owner_id: customer_id,
           owner_resource: 'customer',
