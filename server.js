@@ -34,7 +34,7 @@ app.post('/api/mark-call-read', async (req, res) => {
   const metafieldUrl = `https://${shop}/admin/api/2024-01/customers/${customer_id}/metafields.json`;
 
   try {
-    // 1. Get existing metafields
+    // 1. Get existing metafields filtered by namespace and key
     const response = await fetch(`${metafieldUrl}?namespace=${metafieldNamespace}&key=${metafieldKey}`, {
       headers: {
         'X-Shopify-Access-Token': accessToken,
@@ -43,6 +43,12 @@ app.post('/api/mark-call-read', async (req, res) => {
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error fetching metafields:', data);
+      return res.status(response.status).json({ success: false, error: 'Failed to fetch metafields', details: data });
+    }
+
     let metafield = data.metafields?.[0];
     let updatedIds = [];
 
@@ -72,6 +78,7 @@ app.post('/api/mark-call-read', async (req, res) => {
       ? `https://${shop}/admin/api/2024-01/metafields/${metafield.id}.json`
       : metafieldUrl;
 
+    // 2. Create or update metafield
     const saveResponse = await fetch(targetUrl, {
       method,
       headers: {
@@ -82,6 +89,13 @@ app.post('/api/mark-call-read', async (req, res) => {
     });
 
     const saveResult = await saveResponse.json();
+
+    if (!saveResponse.ok) {
+      console.error('Error saving metafield:', saveResult);
+      return res.status(saveResponse.status).json({ success: false, error: 'Failed to save metafield', details: saveResult });
+    }
+
+    console.log('Save metafield response:', saveResult);
 
     res.json({ success: true, updated: updatedIds, saved: saveResult });
   } catch (err) {
