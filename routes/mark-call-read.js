@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const getUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2024-01/customers/${customer_id}/metafields.json`;
+    const getUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2025-04/customers/${customer_id}/metafields.json`;
     const getResponse = await axios.get(getUrl, {
       headers: { 'X-Shopify-Access-Token': ADMIN_API_ACCESS_TOKEN },
     });
@@ -44,7 +44,7 @@ router.post('/', async (req, res) => {
         updatedValue = current;
       }
 
-      const updateUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2024-01/metafields/${existingMetafield.id}.json`;
+      const updateUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2025-04/metafields/${existingMetafield.id}.json`;
       await axios.put(updateUrl, {
         metafield: {
           id: existingMetafield.id,
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
         },
       });
     } else {
-      const createUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2024-01/metafields.json`;
+      const createUrl = `https://${SHOPIFY_DOMAIN}/admin/api/2025-04/metafields.json`;
       await axios.post(createUrl, {
         metafield: {
           namespace: METAFIELD_NAMESPACE,

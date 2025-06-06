@@ -31,7 +31,7 @@ app.post('/api/mark-call-read', async (req, res) => {
   const metafieldNamespace = 'calls';
   const metafieldKey = 'read_call_ids';
 
-  const metafieldUrl = `https://${shop}/admin/api/2024-01/customers/${customer_id}/metafields.json`;
+  const metafieldUrl = `https://${shop}/admin/api/2025-04/customers/${customer_id}/metafields.json`;
 
   try {
     // 1. Get existing metafields filtered by namespace and key
@@ -75,7 +75,7 @@ app.post('/api/mark-call-read', async (req, res) => {
 
     const method = metafield ? 'PUT' : 'POST';
     const targetUrl = metafield
-      ? `https://${shop}/admin/api/2024-01/metafields/${metafield.id}.json`
+      ? `https://${shop}/admin/api/2025-04/metafields/${metafield.id}.json`
       : metafieldUrl;
 
     // 2. Create or update metafield
