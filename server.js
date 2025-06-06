@@ -28,8 +28,8 @@ app.post('/api/mark-call-read', async (req, res) => {
 
   const shop = process.env.SHOPIFY_DOMAIN; // e.g. mystore.myshopify.com
   const accessToken = process.env.ADMIN_API_ACCESS_TOKEN;
-  const metafieldNamespace = 'calls';
-  const metafieldKey = 'read_call_ids';
+  const metafieldNamespace = 'custom';
+  const metafieldKey = 'read_messages';
 
   const metafieldUrl = `https://${shop}/admin/api/2025-04/customers/${customer_id}/metafields.json`;
 
