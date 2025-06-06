@@ -27,7 +27,14 @@ router.post('/', async (req, res) => {
     let updatedValue = [];
 
     if (existingMetafield) {
-      const current = JSON.parse(existingMetafield.value);
+      let current = [];
+      try {
+        current = JSON.parse(existingMetafield.value);
+        if (!Array.isArray(current)) current = [];
+      } catch (e) {
+        current = [];
+      }
+
       if (!current.includes(call_id)) {
         updatedValue = [...current, call_id];
       } else {
@@ -38,8 +45,8 @@ router.post('/', async (req, res) => {
       await axios.put(updateUrl, {
         metafield: {
           id: existingMetafield.id,
-          value: JSON.stringify(updatedValue),
-          type: 'json',
+          value: updatedValue,
+          type: 'list.single_line_text_field',
         },
       });
     } else {
@@ -48,8 +55,8 @@ router.post('/', async (req, res) => {
         metafield: {
           namespace: METAFIELD_NAMESPACE,
           key: METAFIELD_KEY,
-          value: JSON.stringify([call_id]),
-          type: 'json',
+          value: [call_id],
+          type: 'list.single_line_text_field',
           owner_id: customer_id,
           owner_resource: 'customer',
         },
@@ -59,8 +66,11 @@ router.post('/', async (req, res) => {
 
     res.json({ success: true, updated: updatedValue });
   } catch (error) {
-    console.error('Error:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Metafield update failed' });
+    console.error('Shopify error details:', error.response?.data || error.message);
+    res.status(500).json({
+      error: 'Metafield update failed',
+      details: error.response?.data || error.message,
+    });
   }
 });
 
