@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
       await axios.put(updateUrl, {
         metafield: {
           id: existingMetafield.id,
-          value: updatedValue, // ✅ Do NOT stringify
+          value: JSON.stringify(updatedValue), // stringify array
           type: 'list.single_line_text_field',
         },
       });
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
         metafield: {
           namespace: METAFIELD_NAMESPACE,
           key: METAFIELD_KEY,
-          value: [call_id], // ✅ Do NOT stringify
+          value: JSON.stringify([call_id]), // stringify array
           type: 'list.single_line_text_field',
           owner_id: customer_id,
           owner_resource: 'customer',
