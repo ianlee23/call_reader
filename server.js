@@ -69,9 +69,10 @@ app.post('/api/mark-call-read', async (req, res) => {
         namespace: metafieldNamespace,
         key: metafieldKey,
         type: 'list.single_line_text_field',
-        value: updatedIds,
+        value: updatedIds.join(','), // ✅ Fix is here
       },
     };
+
 
     const method = metafield ? 'PUT' : 'POST';
     const targetUrl = metafield
