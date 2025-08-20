@@ -277,6 +277,64 @@ app.get('/api/get-pinned-calls', async (req, res) => {
   }
 });
 
+// UPDATE CUSTOMER INFO
+app.post('/api/update-user-info', async (req, res) => {
+  const { id, firstName, lastName, email } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Missing customer id' });
+  }
+
+  const mutation = `
+    mutation customerUpdate($input: CustomerInput!) {
+      customerUpdate(input: $input) {
+        customer {
+          id
+          firstName
+          lastName
+          email
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(`https://${SHOPIFY_DOMAIN}/admin/api/2025-04/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': ADMIN_API_ACCESS_TOKEN,
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables: {
+          input: {
+            id: `gid://shopify/Customer/${id}`, // Shopify expects the full GID
+            firstName,
+            lastName,
+            email,
+          },
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.errors) {
+      return res.status(400).json({ success: false, errors: data.errors });
+    }
+
+    res.json({ success: true, data: data.data.customerUpdate });
+  } catch (err) {
+    console.error('Error updating customer:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`✅ Server listening on port ${PORT}`);
